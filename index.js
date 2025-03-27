@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const TelegramApi = require("node-telegram-bot-api");
 
@@ -9,18 +9,16 @@ const bot = new TelegramApi(token, { polling: true });
 const chats = {};
 
 const gameOptions = {
-    reply_markup: JSON.stringify({
-        inline_keyboard: [
-            [{text: 'Текст кнопки', callback_data: 'sdfghjk'}]
-        ]
-    })
-}
+  reply_markup: JSON.stringify({
+    inline_keyboard: [[{ text: "Текст кнопки", callback_data: "sdfghjk" }]],
+  }),
+};
 
 const start = () => {
   bot.setMyCommands([
     { command: "/start", description: "Приветствие" },
     { command: "/info", description: "Информация о пользователе" },
-    { command: "/game", description: "Игра угадай цифру" },
+    { command: "/site", description: "Сайт" },
   ]);
 
   bot.on("message", async (msg) => {
@@ -28,13 +26,9 @@ const start = () => {
     const chatId = msg.chat.id;
 
     if (text === "/start") {
-      await bot.sendSticker(
+      return await bot.sendMessage(
         chatId,
-        "https://cdn2.combot.org/cs1winmoments_by_e4zybot/webp/6xf09f98b4.webp"
-      );
-      return bot.sendMessage(
-        chatId,
-        "Добро пожаловать в телеграм бот Нины Бобылевой!"
+        "Добро пожаловать в телеграм бот для заказов"
       );
     }
 
@@ -45,13 +39,19 @@ const start = () => {
       );
     }
 
-    if (text === '/game') {
-        await bot.sendMessage(chatId, 'Сейчас я загадаю цифру от 0 до 9, а ты должен ее угадать!');
-        const randomNumber = Math.floor(Math.random() * 10);
-        chats[chatId] = randomNumber;
-        return bot.sendMessage(chatId, 'Отгадывай!', gameOptions);
+    if (text === "/site") {
+      await bot.sendMessage(chatId, "Перейдите на сайт", {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "Сайт", web_app: { url: "t.me/bobyleva_bot/myapp" } }],
+          ],
+        },
+      });
+      const randomNumber = Math.floor(Math.random() * 10);
+      chats[chatId] = randomNumber;
+      return bot.sendMessage(chatId, "Отгадывай!", gameOptions);
     }
-    return bot.sendMessage(chatId, 'Я тебя не понимаю, попробуй еще раз!')
+    return bot.sendMessage(chatId, "Я тебя не понимаю, попробуй еще раз!");
   });
 };
 
